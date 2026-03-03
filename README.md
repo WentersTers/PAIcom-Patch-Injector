@@ -1,54 +1,43 @@
-# PAIcom HotSwap Patcher
+PAIcom HotSwap Patcher
 
-Injects a file-watching hot-swap runtime into **your own copy** of PAIcom.exe
-so you can trigger in-game commands by writing a phrase to a text file — no
-microphone required.
+Extends your own copy of PAIcom.exe with a file‑watching runtime, enabling you to trigger in‑game commands by writing a phrase to a text file — no microphone required.
 
-> **Legal notice**: This tool contains no game code.  It reads your locally-
-> installed copy of PAIcom.exe, patches it in memory, and writes a new file.
-> You must own a legitimate copy of PAIcom (e.g. via Steam) to use this tool.
+Legal notice: This tool contains no game code. It reads your locally‑installed copy of PAIcom.exe, and creates an interoperable executable based on your local installation. You must own a legitimate copy of PAIcom (e.g. via Steam) to use this tool.
+This software is provided for research and interoperability purposes.
 
 ---
 
-## Requirements
+Requirements
 
-| Requirement | Notes |
-|-------------|-------|
-| Windows x64 | The patcher is self-contained — no .NET install needed |
-| .NET Framework 4.8 | Required by PAIcom itself; already present if you can launch the game |
-| PAIcom.exe | Your own Steam copy — **not included** |
+Requirement Notes
+Windows x64 The patcher is self‑contained — no .NET install needed
+.NET Framework 4.8 Required by PAIcom itself; already present if you can launch the game
+PAIcom.exe Your own Steam copy — not included
 
 ---
 
-## Quick start
+Quick start
 
-1. Copy `PAIcomPatcher.exe` into the same folder as `PAIcom.exe`
-   (usually `SteamLibrary\steamapps\common\PAIcom`).
-
+1. Copy PAIcomPatcher.exe into the same folder as PAIcom.exe
+      (usually SteamLibrary\steamapps\common\PAIcom).
 2. Open a terminal in that folder and run:
-
    ```
    PAIcomPatcher.exe PAIcom.exe --out PAIcom.patched.exe --backup
    ```
-
-3. Launch `PAIcom.patched.exe` instead of the original (You are able to rename it back to `PAIcom.exe` and remove/rename the backup if you like to something like `PAIcom.original.exe`, but keeping them is recommended for easy troubleshooting).
-
-4. A file called `command_input.txt` is created next to the exe on first run.
-   Write any recognised phrase to it (one line, then save) to dispatch the
-   matching in-game command:
-
+3. Launch PAIcom.patched.exe instead of the original.
+      (You can rename it back to PAIcom.exe and keep the original as PAIcom.original.exe for easy troubleshooting.)
+4. A file called command_input.txt is created next to the exe on first run.
+      Write any recognised phrase to it (one line, then save) to dispatch the matching in‑game command:
    ```
    hey paicom open youtube
    ```
-
-5. Watch `hotswap.log` in the same directory for diagnostic output.
+5. Watch hotswap.log in the same directory for diagnostic output.
 
 ---
 
-## Command mapping
+Command mapping
 
-Place a file at `custom-commands\commands.txt` (relative to the exe) with one
-command per line in this format:
+Place a file at custom-commands\commands.txt (relative to the exe) with one command per line in this format:
 
 ```
 hey paicom open youtube (youtube.txt)
@@ -56,15 +45,13 @@ hey paicom open google (google.txt)
 hey paicom show animations (animations.txt)
 ```
 
-The part in parentheses is the name of the matching animation script inside
-the `animations\` folder (`.txt` extension is stripped automatically).
-Matching is case-insensitive.
+The part in parentheses is the name of the matching animation script inside the animations\ folder (.txt extension is stripped automatically). Matching is case‑insensitive.
 
 ---
 
-## Animation scripts
+Animation scripts
 
-Each file in `animations\` can use these directives (one per line):
+Each file in animations\ can use these directives (one per line):
 
 ```
 HIDE_ALL
@@ -75,44 +62,33 @@ PLAY_AUDIO audio/chime.wav
 WAIT 500
 ```
 
-| Directive | Description |
-|-----------|-------------|
-| `HIDE_ALL` | Hides every PictureBox on the form |
-| `SHOW N` | Shows PictureBox at index N |
-| `HIDE N` | Hides PictureBox at index N |
-| `OPEN_URL <url>` | Opens the URL in the default browser |
-| `PLAY_AUDIO <path>` | Plays a `.wav` file (relative to the exe folder) |
-| `WAIT <ms>` | Pauses script execution for N milliseconds |
+Directive Description
+HIDE_ALL Hides every PictureBox on the form
+SHOW N Shows PictureBox at index N
+HIDE N Hides PictureBox at index N
+OPEN_URL <url> Opens the URL in the default browser
+PLAY_AUDIO <path> Plays a .wav file (relative to the exe folder)
+WAIT <ms> Pauses script execution for N milliseconds
 
-`SHOW`/`HIDE`/`HIDE_ALL` directly manipulate the game's own PictureBox controls
-discovered via reflection at startup.
+SHOW/HIDE/HIDE_ALL directly manipulate the game's own PictureBox controls, discovered at runtime.
 
-> Animation scripts are used when the speech engine dispatch chain fails (see
-> below).  When `[EMULATE-ASYNC] OK` or `[EMULATE-STOP] OK` appears in the
-> log, the game's own full handler ran and played its built-in animations.
+Animation scripts are used when the speech engine dispatch chain fails (see below). When [EMULATE-ASYNC] OK or [EMULATE-STOP] OK appears in the log, the game's own full handler ran and played its built‑in animations.
 
 ---
 
-## Dry run / diagnostics
+Dry run / diagnostics
 
 ```
 PAIcomPatcher.exe PAIcom.exe --dry-run --verbose
 ```
 
-Prints what *would* be patched without writing any files.
-
-```
-PAIcomPatcher.exe PAIcom.exe --analyze
-```
-
-Dumps the top-ranked methods by instruction count, branch density, and call
-count — useful for debugging ConfuserEx-obfuscated assemblies.
+Prints what would be patched without writing any files.
 
 ---
 
-## Building from source
+Building from source
 
-Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download).
+Requires the .NET 8 SDK.
 
 ```
 git clone https://github.com/WentersTers/PAIcom-Patch-Injector.git
@@ -120,16 +96,16 @@ cd PAIcom-Patch-Injector
 dotnet build PAIcomPatcher.csproj -c Release
 ```
 
-### How to find the PAIcom folder path
+How to find the PAIcom folder path
 
 1. Open Steam and go to your Library.
-2. Click **PAIcom**.
-3. Click the **gear icon** next to the Play button.
-4. Choose **Manage → Browse local files**.
+2. Click PAIcom.
+3. Click the gear icon next to the Play button.
+4. Choose Manage → Browse local files.
 5. Copy the folder path from Explorer's address bar.
-6. Use that path in the `cd` command below.
+6. Use that path in the cd command below.
 
-### Compiling a self-contained release exe (PowerShell)
+Compiling a self‑contained release exe (PowerShell)
 
 ```powershell
 cd 'C:\path\to\PAIcom'   # paste your PAIcom folder path here
@@ -139,102 +115,83 @@ dotnet publish PAIcomPatcher.csproj -c Release -r win-x64 `
     -p:PublishTrimmed=false -o publish\
 ```
 
-This bundles .NET 8 into the output so end-users do not need a separate
-runtime installed.  The finished `PAIcomPatcher.exe` is written to
-the `publish\` sub-folder.
+This bundles .NET 8 into the output so end‑users do not need a separate runtime installed. The finished PAIcomPatcher.exe is written to the publish\ sub‑folder.
 
 Then:
 
-1. Copy `publish\PAIcomPatcher.exe` into the same folder as `PAIcom.exe`.
-2. Run it as described in **Quick start**.
+1. Copy publish\PAIcomPatcher.exe into the same folder as PAIcom.exe.
+2. Run it as described in Quick start.
 
 ---
 
-## How it works (technical summary)
+How it works (technical summary)
 
-### 1 — Patch-time: structural IL analysis
+1 — Patch‑time: method location
 
-Because PAIcom uses ConfuserEx (all strings encrypted, identifiers scrambled),
-the patcher cannot search for named types.  Instead it scores every method by
-branch density and call count to locate:
+The patcher scans the methods in the target assembly to locate:
 
-- The **`SpeechRecognizedEventArgs` handler** — the game's main command
-  dispatcher.
-- The **main constructor** (`.ctor`) — used as the injection entry point.
+· The main command dispatcher — the function that processes recognised speech.
+· The main constructor — used as the extension entry point.
 
-### 2 — Patch-time: Roslyn in-memory compilation
+Candidate methods are identified by examining their instruction count and branching characteristics.
 
-A C# `HotSwapRuntime` class (`Core/HotSwapTemplate.cs`) is compiled against
-.NET Framework 4.8 reference assemblies using Roslyn and injected as a new
-type directly into the target module.  No external DLLs are dropped on disk.
+2 — Patch‑time: runtime compilation
 
-### 3 — Patch-time: IL injection
+A C# HotSwapRuntime class (Core/HotSwapTemplate.cs) is compiled against .NET Framework 4.8 reference assemblies and added as a new type directly into the target module. No external DLLs are written to disk.
 
-Two splice points are written into the patched assembly:
+3 — Patch‑time: IL extension
 
-| Splice | What is injected |
-|--------|-----------------|
-| Main constructor | `HotSwapRuntime.StartWatcher()` call after `base..ctor()` |
-| Speech handler | `HotSwapRuntime.OnCommandDispatched(command)` before every `ret` |
+Two points are modified in the patched assembly:
 
-### 4 — Runtime: start-up
+Location Added call
+Main constructor HotSwapRuntime.StartWatcher() after the base constructor
+Command dispatcher HotSwapRuntime.OnCommandDispatched(command) before every return
 
-When `PAIcom.patched.exe` starts, `StartWatcher()` runs and:
+4 — Runtime: start‑up
 
-- Creates `command_input.txt` if it does not exist.
-- Starts a `FileSystemWatcher` on `command_input.txt`.
-- Starts a 500 ms polling loop as a write-lock fallback.
-- Spawns a background thread that waits 3 seconds then begins searching for
-  the `SpeechRecognitionEngine` instance.
+When PAIcom.patched.exe starts, StartWatcher() runs and:
 
-### 5 — Runtime: engine discovery
+· Creates command_input.txt if it does not exist.
+· Starts a FileSystemWatcher on command_input.txt.
+· Starts a 500 ms polling loop as a write‑lock fallback.
+· Spawns a background thread that waits 3 seconds then begins searching for the SpeechRecognitionEngine instance.
 
-The engine search thread walks every open `Form` via
-`Application.OpenForms`, reading instance fields via reflection to find
-a `SpeechRecognitionEngine` or `SpeechRecognizer`.  On success it logs:
+5 — Runtime: engine discovery
+
+The background thread walks every open Form via Application.OpenForms, reading instance fields to find a SpeechRecognitionEngine or SpeechRecognizer. On success it logs:
 
 ```
-[ENGINE] Ready: System.Speech.Recognition.SpeechRecognitionEngine.EmulateRecognize(string)
-[ENGINE] Ready: System.Speech.Recognition.SpeechRecognitionEngine.EmulateRecognizeAsync(string)
-[ENGINE] Ready: RecognizeAsyncCancel()
-[ENGINE] Ready: RecognizeAsync(System.Speech.Recognition.RecognizeMode)
+[ENGINE] Ready: EmulateRecognize, EmulateRecognizeAsync, RecognizeAsyncCancel, RecognizeAsync
 ```
 
 At the same time the form is scanned for:
 
-- **PictureBox controls** (for `SHOW`/`HIDE` in script fallback).
-- **Animation method** — any instance method with signature `Task Method(string)`,
-  matched by exact return-type name, partial name, or `AsyncStateMachineAttribute`.
-- **Command handler method** — heuristic: `void Method(string)` with a
-  non-trivial IL body, used as a last-resort direct call.
+· PictureBox controls (for script fallback).
+· Animation method — any instance method with signature Task Method(string).
+· Command handler method — a fallback void Method(string) if present.
 
-### 6 — Runtime: command dispatch (5-attempt chain)
+6 — Runtime: command dispatch (5‑attempt chain)
 
-When a phrase is written to `command_input.txt` the injected runtime:
+When a phrase is written to command_input.txt the runtime:
 
 1. Reads and trims the file content.
-2. Looks up the phrase in `custom-commands/commands.txt` to resolve a command name.
+2. Looks up the phrase in custom-commands/commands.txt to resolve a command name.
 3. Runs the following dispatch chain in order, stopping at the first success:
 
-| Attempt | Strategy | Log prefix |
-|---------|----------|------------|
-| 1 | **`EmulateRecognizeAsync(phrase)` on the UI thread** — marshalled via `Form.Invoke()`.  Fires the game's own full handler with animations, audio, and URLs. | `[EMULATE-ASYNC]` |
-| 2 | **Stop/restart** — calls `RecognizeAsyncCancel()`, then `EmulateRecognize(phrase)`, then `RecognizeAsync(Multiple)`, all on the UI thread.  Used when the engine rejects async emulation. | `[EMULATE-STOP]` |
-| 3 | **Direct animation method** — calls the discovered `Task Method(string)` directly on the UI thread via `BeginInvoke`. | `[DIRECT-INVOKE]` |
-| 4 | **Command handler method** — calls the discovered `void Method(string)` directly on the UI thread via `BeginInvoke`. | `[CMD-HANDLER]` |
-| 5 | **Script fallback** — reads and executes the matching `animations/*.txt` file locally, including real `SHOW`/`HIDE` via reflection on the form's PictureBox controls. | `[SCRIPT]` |
+Attempt Strategy Log prefix
+1 EmulateRecognizeAsync(phrase) on the UI thread — marshalled via Form.Invoke(). Fires the game's own full handler with animations, audio, and URLs. [EMULATE-ASYNC]
+2 Stop/restart — calls RecognizeAsyncCancel(), then EmulateRecognize(phrase), then RecognizeAsync(Multiple), all on the UI thread. [EMULATE-STOP]
+3 Direct animation method — calls the discovered Task Method(string) on the UI thread via BeginInvoke. [DIRECT-INVOKE]
+4 Command handler method — calls the discovered void Method(string) on the UI thread via BeginInvoke. [CMD-HANDLER]
+5 Script fallback — reads and executes the matching animations/*.txt file locally, controlling PictureBoxes via reflection. [SCRIPT]
 
-> **Important**: `SpeechRecognitionEngine` is thread-affine — all calls to it
-> must happen on the UI thread that created it.  All engine calls are therefore
-> marshalled through `Form.Invoke()` rather than called directly from the
-> background watcher thread.
+Important: SpeechRecognitionEngine is thread‑affine — all calls to it are marshalled through Form.Invoke() to ensure they run on the correct UI thread.
 
 ---
 
-## Reading the log
+Reading the log
 
-`hotswap.log` (written next to the exe) records every step.  A successful
-dispatch looks like:
+hotswap.log (written next to the exe) records every step. A successful dispatch looks like:
 
 ```
 [21:34:02.596] [DISPATCH] 'aliexpress' (phrase: 'hey paicom open aliexpress')
@@ -254,13 +211,10 @@ If all engine attempts fail the script fallback runs:
 
 ---
 
-## License
+License
 
-MIT — see [LICENSE](LICENSE)
+MIT — see LICENSE
 
-> This tool does not circumvent copy protection, licensing, or DRM.
-> ConfuserEx obfuscation is bypassed solely for interoperability purposes.
-> Users are responsible for complying with PAIcom's EULA.
-
-
-
+This tool does not circumvent copy protection, licensing, or DRM.
+It operates solely on a local copy of the software for interoperability purposes.
+Users are responsible for complying with PAIcom's EULA.
