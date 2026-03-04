@@ -1,6 +1,6 @@
 # PAIcom Patcher
 
-**Extends your own copy** of `PAIcom.exe` with a file‑watching runtime, enabling you to trigger in‑game commands by writing a phrase to a text file — **no microphone required**.
+**Extends your own copy** of `PAIcom.exe` with a file‑watching runtime, enabling you to trigger in‑game commands by writing a phrase to a text file - **no microphone required**.
 
 > **Legal notice**  
 > This tool contains **no game code**.  
@@ -14,9 +14,9 @@
 
 | Requirement        | Notes                                                                                   |
 |--------------------|-----------------------------------------------------------------------------------------|
-| Windows x64        | The patcher is self‑contained — no .NET install needed                                  |
+| Windows x64        | The patcher is self‑contained - no .NET install needed                                  |
 | .NET Framework 4.8 | Required by PAIcom itself; already present if you can launch the game                   |
-| `PAIcom.exe`       | Your own Steam copy — not included                                                      |
+| `PAIcom.exe`       | Your own Steam copy - not included                                                      |
 
 ---
 
@@ -137,20 +137,20 @@ Then:
 
 ## How it works (technical summary)
 
-### 1 — Patch‑time: method location
+### 1 - Patch‑time: method location
 
 The patcher scans the methods in the target assembly to locate:
 
-- The main command dispatcher — the function that processes recognised speech.
-- The main constructor — used as the extension entry point.
+- The main command dispatcher - the function that processes recognised speech.
+- The main constructor - used as the extension entry point.
 
 Candidate methods are identified by examining their instruction count and branching characteristics.
 
-### 2 — Patch‑time: runtime compilation
+### 2 - Patch‑time: runtime compilation
 
 A C# `HotSwapRuntime` class (`Core/HotSwapTemplate.cs`) is compiled against .NET Framework 4.8 reference assemblies and added as a new type directly into the target module. **No external DLLs are written to disk.**
 
-### 3 — Patch‑time: IL extension
+### 3 - Patch‑time: IL extension
 
 Two points are modified in the patched assembly:
 
@@ -159,7 +159,7 @@ Two points are modified in the patched assembly:
 | Main constructor    | `HotSwapRuntime.StartWatcher()` after the base constructor |
 | Command dispatcher  | `HotSwapRuntime.OnCommandDispatched(command)` before every return |
 
-### 4 — Runtime: start‑up
+### 4 - Runtime: start‑up
 
 When `PAIcom.patched.exe` starts, `StartWatcher()` runs and:
 
@@ -168,7 +168,7 @@ When `PAIcom.patched.exe` starts, `StartWatcher()` runs and:
 - Starts a 500 ms polling loop as a write‑lock fallback.
 - Spawns a background thread that waits 3 seconds then begins searching for the `SpeechRecognitionEngine` instance.
 
-### 5 — Runtime: engine discovery
+### 5 - Runtime: engine discovery
 
 The background thread walks every open `Form` via `Application.OpenForms`, reading instance fields to find a `SpeechRecognitionEngine` or `SpeechRecognizer`. On success it logs:
 
@@ -179,10 +179,10 @@ The background thread walks every open `Form` via `Application.OpenForms`, readi
 At the same time the form is scanned for:
 
 - `PictureBox` controls (for script fallback).
-- Animation method — any instance method with signature `Task Method(string)`.
-- Command handler method — a fallback `void Method(string)` if present.
+- Animation method - any instance method with signature `Task Method(string)`.
+- Command handler method - a fallback `void Method(string)` if present.
 
-### 6 — Runtime: command dispatch (5‑attempt chain)
+### 6 - Runtime: command dispatch (5‑attempt chain)
 
 When a phrase is written to `command_input.txt` the runtime:
 
@@ -192,13 +192,13 @@ When a phrase is written to `command_input.txt` the runtime:
 
 | Attempt | Strategy                          | Log prefix      |
 |---------|-----------------------------------|-----------------|
-| 1       | `EmulateRecognizeAsync(phrase)` on the UI thread — marshalled via `Form.Invoke()`. Fires the game's own full handler with animations, audio, and URLs. | `[EMULATE-ASYNC]` |
-| 2       | Stop/restart — calls `RecognizeAsyncCancel()`, then `EmulateRecognize(phrase)`, then `RecognizeAsync(Multiple)`, all on the UI thread. | `[EMULATE-STOP]` |
-| 3       | Direct animation method — calls the discovered `Task Method(string)` on the UI thread via `BeginInvoke`. | `[DIRECT-INVOKE]` |
-| 4       | Command handler method — calls the discovered `void Method(string)` on the UI thread via `BeginInvoke`. | `[CMD-HANDLER]` |
-| 5       | Script fallback — reads and executes the matching `animations/*.txt` file locally, controlling `PictureBox`es via reflection. | `[SCRIPT]` |
+| 1       | `EmulateRecognizeAsync(phrase)` on the UI thread - marshalled via `Form.Invoke()`. Fires the game's own full handler with animations, audio, and URLs. | `[EMULATE-ASYNC]` |
+| 2       | Stop/restart - calls `RecognizeAsyncCancel()`, then `EmulateRecognize(phrase)`, then `RecognizeAsync(Multiple)`, all on the UI thread. | `[EMULATE-STOP]` |
+| 3       | Direct animation method - calls the discovered `Task Method(string)` on the UI thread via `BeginInvoke`. | `[DIRECT-INVOKE]` |
+| 4       | Command handler method - calls the discovered `void Method(string)` on the UI thread via `BeginInvoke`. | `[CMD-HANDLER]` |
+| 5       | Script fallback - reads and executes the matching `animations/*.txt` file locally, controlling `PictureBox`es via reflection. | `[SCRIPT]` |
 
-**Important:** `SpeechRecognitionEngine` is thread‑affine — all calls to it are marshalled through `Form.Invoke()` to ensure they run on the correct UI thread.
+**Important:** `SpeechRecognitionEngine` is thread‑affine - all calls to it are marshalled through `Form.Invoke()` to ensure they run on the correct UI thread.
 
 ---
 
@@ -226,7 +226,7 @@ If all engine attempts fail the script fallback runs:
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT - see [LICENSE](LICENSE)
 
 This tool does not circumvent copy protection, licensing, or DRM.  
 It operates solely on a local copy of the software for interoperability purposes.  
